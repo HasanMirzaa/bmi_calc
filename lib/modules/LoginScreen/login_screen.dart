@@ -10,12 +10,16 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  var emailController = TextEditingController();
+
+  var passwordController = TextEditingController();
+
+  var formKey = GlobalKey<FormState>();
+
+  bool isPassword = true;
+
   @override
   Widget build(BuildContext context) {
-    var emailController = TextEditingController();
-    var passwordController = TextEditingController();
-    var formKey = GlobalKey<FormState>();
-    bool isPassword = true;
     return Scaffold(
       appBar: AppBar(),
       body: Padding(
@@ -29,55 +33,68 @@ class _LoginScreenState extends State<LoginScreen> {
                 children: [
                   const Text(
                     'Login',
-                    style:
-                        TextStyle(fontSize: 40.0, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      fontSize: 40.0,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(
-                    height: 40.0,
+                    height: 20.0,
                   ),
-                  defaultFormField(
-                    controller: emailController,
-                    type: TextInputType.emailAddress,
-                    validatorText: 'Email must not be empty',
-                    label: 'Email Address',
-                    prefix: Icons.email,
-                  ),
+                  defaultTextFormField(
+                      controller: emailController,
+                      type: TextInputType.emailAddress,
+                      validate: (value) {
+                        if (value == null || value.trim() == '') {
+                          return 'Email must be entered';
+                        }
+                        return null;
+                      },
+                      label: 'Email',
+                      prefixIcon: Icons.email),
                   const SizedBox(
                     height: 15.0,
                   ),
-                  defaultFormField(
+                  defaultTextFormField(
                       controller: passwordController,
                       type: TextInputType.visiblePassword,
-                      prefix: Icons.lock,
-                      validatorText: 'Password Must not be empty',
+                      validate: (value) {
+                        if (value == null || value.trim() == '') {
+                          return 'Password must be entered';
+                        }
+                        return null;
+                      },
                       label: 'Password',
-                      suffixIcon: Icons.remove_red_eye,
-                      isPassword: isPassword,
+                      prefixIcon: Icons.lock,
+                      suffixIcon:
+                          isPassword ? Icons.visibility : Icons.visibility_off,
+                      obsecure: isPassword,
                       suffixIconPressed: () {
                         setState(() {
                           isPassword = !isPassword;
                         });
                       }),
-                  const SizedBox(
-                    height: 20.0,
-                  ),
+                  const SizedBox(height: 15.0),
                   defaultButton(
-                      text: 'login',
                       function: () {
                         if (formKey.currentState!.validate()) {
-                          print(emailController.text);
-                          print(passwordController.text);
+                          print(emailController.text +
+                              " = " +
+                              passwordController.text);
                         }
-                      }),
+                      },
+                      text: 'login'),
                   const SizedBox(
                     height: 10.0,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text('Don\'t have an account?!'),
+                      const Text('Don\'t have an account?!!'),
                       TextButton(
-                          onPressed: () {}, child: const Text('Register Now'))
+                        onPressed: () {},
+                        child: const Text('Register Now'),
+                      )
                     ],
                   )
                 ],

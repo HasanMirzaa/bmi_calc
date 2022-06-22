@@ -2,58 +2,52 @@ import 'package:flutter/material.dart';
 
 Widget defaultButton({
   double width = double.infinity,
-  Color backGround = Colors.blue,
+  Color background = Colors.blue,
   required VoidCallback function,
   required String text,
-  bool isUpperCase = true,
 }) =>
     Container(
       width: width,
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5.0), color: backGround),
+        borderRadius: BorderRadius.circular(10.0),
+        color: background,
+      ),
       child: MaterialButton(
         onPressed: function,
         child: Text(
-          isUpperCase ? text.toUpperCase() : text,
+          text.toUpperCase(),
           style: const TextStyle(color: Colors.white),
         ),
       ),
     );
 
-Widget defaultFormField({
+Widget defaultTextFormField({
   required TextEditingController controller,
   required TextInputType type,
-  final ValueChanged? onSubmit,
-  final ValueChanged? onChange,
-  //required Function validate,
-  required IconData prefix,
-  required String validatorText,
+  required FormFieldValidator validate,
   required String label,
+  required IconData prefixIcon,
   IconData? suffixIcon,
-  bool isPassword = false,
-  Function? suffixPressed,
+  bool obsecure = false,
   VoidCallback? suffixIconPressed,
+  VoidCallback? onTab,
+  bool isClickable = true,
 }) =>
     TextFormField(
       controller: controller,
       keyboardType: type,
-      onFieldSubmitted: onSubmit,
-      onChanged: onChange,
-      validator: (value) {
-        if (value!.isEmpty) {
-          return validatorText.toString();
-        }
-        return null;
-      },
-      obscureText: isPassword,
+      validator: validate,
+      obscureText: obsecure,
+      onTap: onTab,
+      enabled: isClickable,
       decoration: InputDecoration(
-          prefixIcon: Icon(prefix),
+          labelText: label,
+          prefixIcon: Icon(prefixIcon),
           suffixIcon: suffixIcon != null
               ? IconButton(
                   icon: Icon(suffixIcon),
                   onPressed: suffixIconPressed,
                 )
               : null,
-          labelText: label,
           border: const OutlineInputBorder()),
     );
