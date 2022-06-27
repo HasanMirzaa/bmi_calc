@@ -1,4 +1,8 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+
+import 'bmi_results_screen.dart';
 
 class BmiScreen extends StatefulWidget {
   const BmiScreen({Key? key}) : super(key: key);
@@ -177,6 +181,7 @@ class _BmiScreenState extends State<BmiScreen> {
                                   age--;
                                 });
                               },
+                              heroTag: 'age-',
                               mini: true,
                               child: const Icon(Icons.remove),
                             ),
@@ -186,6 +191,7 @@ class _BmiScreenState extends State<BmiScreen> {
                                   age++;
                                 });
                               },
+                              heroTag: 'age+',
                               mini: true,
                               child: const Icon(Icons.add),
                             ),
@@ -227,6 +233,7 @@ class _BmiScreenState extends State<BmiScreen> {
                                   weight--;
                                 });
                               },
+                              heroTag: 'weight-',
                               mini: true,
                               child: const Icon(Icons.remove),
                             ),
@@ -236,6 +243,7 @@ class _BmiScreenState extends State<BmiScreen> {
                                   weight++;
                                 });
                               },
+                              heroTag: 'weight+',
                               mini: true,
                               child: const Icon(Icons.add),
                             ),
@@ -253,7 +261,17 @@ class _BmiScreenState extends State<BmiScreen> {
             color: Colors.blue,
             height: 50.0,
             child: MaterialButton(
-              onPressed: () {},
+              onPressed: () {
+                var result = weight / pow(height / 100, 2);
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => BmiResultsScreen(
+                              age: age,
+                              isMale: isMale,
+                              result: result.round(),
+                            )));
+              },
               child: const Text(
                 'CALCULATE',
                 style: TextStyle(color: Colors.white),
