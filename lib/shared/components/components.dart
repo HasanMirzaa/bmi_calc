@@ -52,27 +52,29 @@ Widget defaultTextFormField({
           border: const OutlineInputBorder()),
     );
 
-Widget buildTaskItem() => Padding(
+Widget buildTaskItem(Map models) => Padding(
       padding: const EdgeInsets.all(20.0),
       child: Row(
         children: [
-          const CircleAvatar(
+          CircleAvatar(
             radius: 40.0,
-            child: Text('02:00 pm'),
+            child: Text('${models['time']}'),
           ),
           const SizedBox(
             width: 20.0,
           ),
           Column(
             mainAxisSize: MainAxisSize.min,
-            children: const [
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
               Text(
-                'Task Title',
-                style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+                '${models['title']}',
+                style: const TextStyle(
+                    fontSize: 18.0, fontWeight: FontWeight.bold),
               ),
               Text(
-                '2 april, 2022',
-                style: TextStyle(color: Colors.grey),
+                '${models['date']}',
+                style: const TextStyle(color: Colors.grey),
               )
             ],
           )

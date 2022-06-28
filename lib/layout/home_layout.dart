@@ -2,6 +2,7 @@ import 'package:bmi_calc/modules/AppBar/archived_tasks_screen.dart';
 import 'package:bmi_calc/modules/AppBar/done_tasks_screen.dart';
 import 'package:bmi_calc/modules/AppBar/new_tasks_screen.dart';
 import 'package:bmi_calc/shared/components/components.dart';
+import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sqflite/sqflite.dart';
@@ -16,6 +17,13 @@ class HomeLayout extends StatefulWidget {
 }
 
 class _HomeLayoutState extends State<HomeLayout> {
+  @override
+  void initState() {
+    super.initState();
+
+    createDB();
+  }
+
   int currentIndex = 0;
   List<Widget> screens = [
     NewTasksScreen(),
@@ -34,11 +42,6 @@ class _HomeLayoutState extends State<HomeLayout> {
   var dateController = TextEditingController();
 
   var formKey = GlobalKey<FormState>();
-  @override
-  void initState() {
-    createDB();
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +50,11 @@ class _HomeLayoutState extends State<HomeLayout> {
       appBar: AppBar(
         title: Text(titles[currentIndex]),
       ),
-      body: screens[currentIndex],
+      body: ConditionalBuilder(
+        condition: tasks.isNotEmpty,
+        builder: (context) => screens[currentIndex],
+        fallback: (context) => const CircularProgressIndicator(),
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           if (isBottomSheetShown) {
@@ -56,9 +63,15 @@ class _HomeLayoutState extends State<HomeLayout> {
                       dateController.text)
                   .then((value) {
                 Navigator.pop(context);
-                isBottomSheetShown = false;
-                setState(() {
-                  fabIcon = Icons.edit;
+
+                getDataFromDatabase(db).then((value) {
+                  setState(() {
+                    fabIcon = Icons.edit;
+                    isBottomSheetShown = false;
+
+                    tasks = value;
+                    print(tasks);
+                  });
                 });
               });
             }
@@ -179,7 +192,6 @@ class _HomeLayoutState extends State<HomeLayout> {
   }
 
   void createDB() async {
-    print('1');
     db = await openDatabase('todo69.db', version: 1, onCreate: (db, version) {
       print('database created');
       db
@@ -205,7 +217,7 @@ class _HomeLayoutState extends State<HomeLayout> {
     return await db.transaction((txn) {
       txn
           .rawInsert(
-              'INSERT INTO tasks(title, date, time, status) VALUES("$title", "$time", "$date", "new")')
+              'INSERT INTO tasks(title, date, time, status) VALUES("$title", "$date", "$time", "new")')
           .then((value) {
         print('$value inserted successfully');
       }).catchError((error) {
